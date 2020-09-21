@@ -617,7 +617,6 @@
         </script>
         <!--客服悬浮窗JS结束-->
 
-
         <!--产品图弹窗介绍-->
         <div class="modal fade" id="product1" tabindex="-1" role="dialog" aria-labelledby="modalLabel" style="display:none">
             <!-- 在style文件中设置lg max-height：1200px-->
@@ -672,7 +671,6 @@
                                     <p><li>1 ans de garantie</p>
                             </div>
                         </div>
-
                     </div>
                     <div class="modal-footer">
                         <!--                        <button type="submit" class="btn btn-primary">确定</button>-->
@@ -711,7 +709,6 @@
                 </div>
             </div>
         </div>
-
         <!--产品图弹窗部分结束-->
 
         <!-- 客服聊天框 -->
@@ -806,6 +803,7 @@
         <!--客服人工回复-->
         <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
         <script>
+
                                         $(function () {
                                             var wsurl = 'ws://192.168.1.100:8090';
                                             var websocket;
@@ -826,7 +824,11 @@
                                                     var uname = msg.name; //发送人
                                                     i++;
                                                     if (type == 'usermsg') {
-                                                        $('.chatBox-content-demo').append(reply(umsg));
+                                                        if (uname == 'client') {
+
+                                                        } else {
+                                                            $('.chatBox-content-demo').append(reply(umsg));
+                                                        }
                                                     }
                                                     if (type == 'system') {
                                                         console.log(umsg);
@@ -853,18 +855,15 @@
 
                                                 function send() {
                                                     //var name = $('#name').val();
+                                                    var name = 'client';
                                                     var message = $('#message').val();
-//                        if (!name) {
-//                            alert('请输入用户名!');
-//                            return false;
-//                        }
-                                                    if (!message) {
-                                                        alert('Entrer un message svp !');
-                                                        return false;
-                                                    }
+//                                                    if (!message) {
+//                                                        alert('Entrer un message svp !');
+//                                                        return false;
+//                                                    }
                                                     var msg = {
                                                         message: message,
-//                            name: name
+                                                        name: name
                                                     };
                                                     try {
                                                         websocket.send(JSON.stringify(msg));
@@ -886,22 +885,23 @@
                                                                 $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
                                                             });
                                                             document.getElementById('timenow').innerHTML = timenow();
-                                                            if (textContent.indexOf("balabala1") != "-1" || textContent.indexOf("1") != "-1") {
-                                                                var re = "<a href=\"#devis\">Rua~</a>";
-                                                                reply(re);
-                                                            } else if (textContent.indexOf("balabala2") != "-1" || textContent.indexOf("2") != "-1") {
-                                                                var re = "RuaRua~";
-                                                                reply(re);
-                                                            } else if (textContent.indexOf("balabala3") != "-1" || textContent.indexOf("3") != "-1") {
-                                                                var re = "RuaRuaRua~";
-                                                                reply(re);
-                                                            } else if (textContent.indexOf("balabala4") != "-1" || textContent.indexOf("4") != "-1") {
-                                                                var re = "RuaRuaRuaRua~";
-                                                                reply(re);
-                                                            } else {
-                                                                var re = "Questions susceptibles de vous intéresser: <br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(1)\",600)>1.balabala1</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(2)\",600)>2.balabala2 </a><br><a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(3)\",600)>3.balabala3</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(4)\",600)>4.balabala4</a>";
-                                                                reply(re);
-                                                            }
+                                                            
+//                                                            if (textContent.indexOf("balabala1") != "-1" || textContent.indexOf("1") != "-1") {
+//                                                                var re = "<a href=\"#devis\">Rua~</a>";
+//                                                                reply(re);
+//                                                            } else if (textContent.indexOf("balabala2") != "-1" || textContent.indexOf("2") != "-1") {
+//                                                                var re = "RuaRua~";
+//                                                                reply(re);
+//                                                            } else if (textContent.indexOf("balabala3") != "-1" || textContent.indexOf("3") != "-1") {
+//                                                                var re = "RuaRuaRua~";
+//                                                                reply(re);
+//                                                            } else if (textContent.indexOf("balabala4") != "-1" || textContent.indexOf("4") != "-1") {
+//                                                                var re = "RuaRuaRuaRua~";
+//                                                                reply(re);
+//                                                            } else {
+//                                                                var re = "Questions susceptibles de vous intéresser: <br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(1)\",600)>1.balabala1</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(2)\",600)>2.balabala2 </a><br><a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(3)\",600)>3.balabala3</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(4)\",600)>4.balabala4</a>";
+//                                                                reply(re);
+//                                                            }
 
                                                         }
                                                     }
