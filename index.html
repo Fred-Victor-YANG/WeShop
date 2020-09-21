@@ -812,7 +812,8 @@
         <!--读取客户IP-->
         <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
         <script type="text/javascript">
-            console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"])
+            console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"]);
+            var ip_client = returnCitySN["cip"];
         </script>
         <script>
             $(function () {
@@ -824,7 +825,9 @@
                     //连接建立
                     websocket.onopen = function (event) {
                         console.log("Connected to WebSocket server.");
-                        $('.chatBox-content-demo').append(reply('Bonjour, avez-vous des question ?'));
+                        if (conseilleur == 1) {
+                            $('.chatBox-content-demo').append(reply('Bonjour, avez-vous des question ?'));
+                        }
                     }
                     //收到消息
                     websocket.onmessage = function (event) {
@@ -837,8 +840,6 @@
                         if (type == 'usermsg') {
                             if (uname == 'conseilleur') {
                                 $('.chatBox-content-demo').append(reply(umsg));
-                            } else {
-                                
                             }
                         }
                         if (type == 'system') {
@@ -866,7 +867,7 @@
 
                     function send() {
                         //var name = $('#name').val();
-                        var name = returnCitySN["cip"];
+                        var name = ip_client;
                         var message = $('#message').val();
                         var msg = {
                             message: message,
