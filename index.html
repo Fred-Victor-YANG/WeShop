@@ -800,146 +800,161 @@
         </div>
         <!-- 客服自动回复聊天框部分结束 -->
 
+        <!-- 检测人工是否上线，判断是否需要机器回复 -->
+        <script>
+            var conseilleur = 1;
+
+        </script>
+        <!-- 检测人工是否上线部分结束 -->
+
         <!--客服人工回复-->
         <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+        <!--读取客户IP-->
+        <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+        <script type="text/javascript">
+            console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"])
+        </script>
         <script>
+            $(function () {
+                var wsurl = 'ws://192.168.1.100:8090';
+                var websocket;
+                var i = 0;
+                if (window.WebSocket) {
+                    websocket = new WebSocket(wsurl);
+                    //连接建立
+                    websocket.onopen = function (event) {
+                        console.log("Connected to WebSocket server.");
+                        $('.chatBox-content-demo').append(reply('Bonjour, avez-vous des question ?'));
+                    }
+                    //收到消息
+                    websocket.onmessage = function (event) {
+                        var msg = JSON.parse(event.data); //解析收到的json消息数据
+                        console.log(msg);
+                        var type = msg.type; // 消息类型
+                        var umsg = msg.message; //消息文本
+                        var uname = msg.name; //发送人
+                        i++;
+                        if (type == 'usermsg') {
+                            if (uname == 'conseilleur') {
+                                $('.chatBox-content-demo').append(reply(umsg));
+                            } else {
+                                
+                            }
+                        }
+                        if (type == 'system') {
+                            console.log(umsg);
+                        }
+                        $('#message').val('');
+                        window.location.hash = '#' + i;
+                    }
 
-                                        $(function () {
-                                            var wsurl = 'ws://192.168.1.100:8090';
-                                            var websocket;
-                                            var i = 0;
-                                            if (window.WebSocket) {
-                                                websocket = new WebSocket(wsurl);
-                                                //连接建立
-                                                websocket.onopen = function (event) {
-                                                    console.log("Connected to WebSocket server.");
-                                                    $('.chatBox-content-demo').append(reply('Bonjour, avez-vous des question ?'));
-                                                }
-                                                //收到消息
-                                                websocket.onmessage = function (event) {
-                                                    var msg = JSON.parse(event.data); //解析收到的json消息数据
-                                                    console.log(msg);
-                                                    var type = msg.type; // 消息类型
-                                                    var umsg = msg.message; //消息文本
-                                                    var uname = msg.name; //发送人
-                                                    i++;
-                                                    if (type == 'usermsg') {
-                                                        if (uname == 'client') {
+                    //发生错误
+                    websocket.onerror = function (event) {
+                        i++;
+                        console.log("Connected to WebSocket server error");
+                        $('.chatBox-content-demo').append(reply('Connect to the server error.'));
+                        window.location.hash = '#' + i;
+                    }
 
-                                                        } else {
-                                                            $('.chatBox-content-demo').append(reply(umsg));
-                                                        }
-                                                    }
-                                                    if (type == 'system') {
-                                                        console.log(umsg);
-                                                    }
-                                                    $('#message').val('');
-                                                    window.location.hash = '#' + i;
-                                                }
+                    //连接关闭
+                    websocket.onclose = function (event) {
+                        i++;
+                        console.log('websocket Connection Closed. ');
+                        $('.chatBox-content-demo').append(reply('Connection Closed.'));
+                        window.location.hash = '#' + i;
+                    }
 
-                                                //发生错误
-                                                websocket.onerror = function (event) {
-                                                    i++;
-                                                    console.log("Connected to WebSocket server error");
-                                                    $('.chatBox-content-demo').append(reply('Connect to the server error.'));
-                                                    window.location.hash = '#' + i;
-                                                }
+                    function send() {
+                        //var name = $('#name').val();
+                        var name = returnCitySN["cip"];
+                        var message = $('#message').val();
+                        var msg = {
+                            message: message,
+                            name: name
+                        };
+                        try {
+                            websocket.send(JSON.stringify(msg));
+                            repeatClientMsg(message);
+                            document.getElementById('message').value = "";
+                        } catch (ex) {
+                            console.log(ex);
+                        }
+                    }
 
-                                                //连接关闭
-                                                websocket.onclose = function (event) {
-                                                    i++;
-                                                    console.log('websocket Connection Closed. ');
-                                                    $('.chatBox-content-demo').append(reply('Connection Closed.'));
-                                                    window.location.hash = '#' + i;
-                                                }
+                    //按下enter键发送消息
+                    $(window).keydown(function (event) {
+                        if (event.keyCode == 13) {
+                            if (conseilleur == 1) {
+                                send();
+                            } else {
+                                var textContent = $("#message").val();
+                                repeatClientMsg(textContent);
+                                $("#message").val('');
+                                if (textContent != "") {
+                                    //聊天框默认最底部
+                                    $(document).ready(function () {
+                                        $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+                                    });
+                                    document.getElementById('timenow').innerHTML = timenow();
+                                    if (textContent.indexOf("balabala1") != "-1" || textContent.indexOf("1") != "-1") {
+                                        var re = "<a href=\"#devis\">Rua~</a>";
+                                        reply(re);
+                                    } else if (textContent.indexOf("balabala2") != "-1" || textContent.indexOf("2") != "-1") {
+                                        var re = "RuaRua~";
+                                        reply(re);
+                                    } else if (textContent.indexOf("balabala3") != "-1" || textContent.indexOf("3") != "-1") {
+                                        var re = "RuaRuaRua~";
+                                        reply(re);
+                                    } else if (textContent.indexOf("balabala4") != "-1" || textContent.indexOf("4") != "-1") {
+                                        var re = "RuaRuaRuaRua~";
+                                        reply(re);
+                                    } else {
+                                        var re = 'Questions susceptibles de vous intéresser: <br> <a href="javascript:void(0);" onclick=setTimeout("replyNum(1)",600)>1.balabala1</a><br> <a href="javascript:void(0);" onclick=setTimeout("replyNum(2)",600)>2.balabala2 </a><br><a href="javascript:void(0);" onclick=setTimeout("replyNum(3)",600)>3.balabala3</a><br> <a href="javascript:void(0);" onclick=setTimeout("replyNum(4)",600)>4.balabala4</a>';
+                                        reply(re);
+                                    }
+                                }
+                            }
+                        }
+                    });
 
-                                                function send() {
-                                                    //var name = $('#name').val();
-                                                    var name = 'client';
-                                                    var message = $('#message').val();
-//                                                    if (!message) {
-//                                                        alert('Entrer un message svp !');
-//                                                        return false;
-//                                                    }
-                                                    var msg = {
-                                                        message: message,
-                                                        name: name
-                                                    };
-                                                    try {
-                                                        websocket.send(JSON.stringify(msg));
-                                                        repeatClientMsg(message);
-                                                        document.getElementById('message').value = "";
-                                                    } catch (ex) {
-                                                        console.log(ex);
-                                                    }
-                                                }
+                    //点发送按钮发送消息
+                    $("#chat-fasong").click(function () {
+                        if (conseilleur == 1) {
+                            send();
+                        } else {
+                            var textContent = $("#message").val();
+                            repeatClientMsg(textContent);
+                            document.getElementById("message").value = '';
+                            if (textContent != "") {
+                                //聊天框默认最底部
+                                $(document).ready(function () {
+                                    $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
+                                });
+                                document.getElementById('timenow').innerHTML = timenow();
+                                if (textContent.indexOf("balabala1") != "-1" || textContent.indexOf("1") != "-1") {
+                                    var re = "<a href=\"#devis\">Rua~</a>";
+                                    reply(re);
+                                } else if (textContent.indexOf("balabala2") != "-1" || textContent.indexOf("2") != "-1") {
+                                    var re = "RuaRua~";
+                                    reply(re);
+                                } else if (textContent.indexOf("balabala3") != "-1" || textContent.indexOf("3") != "-1") {
+                                    var re = "RuaRuaRua~";
+                                    reply(re);
+                                } else if (textContent.indexOf("balabala4") != "-1" || textContent.indexOf("4") != "-1") {
+                                    var re = "RuaRuaRuaRua~";
+                                    reply(re);
+                                } else {
+                                    var re = "Questions susceptibles de vous intéresser: <br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(1)\",600)>1.balabala1</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(2)\",600)>2.balabala2 </a><br><a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(3)\",600)>3.balabala3</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(4)\",600)>4.balabala4</a>";
+                                    reply(re);
+                                }
 
-                                                //按下enter键发送消息
-                                                $(window).keydown(function (event) {
-                                                    if (event.keyCode == 13) {
-                                                        var textContent = $("#message").val();
-                                                        send();
-                                                        if (textContent != "") {
-                                                            //聊天框默认最底部
-                                                            $(document).ready(function () {
-                                                                $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
-                                                            });
-                                                            document.getElementById('timenow').innerHTML = timenow();
-                                                            
-//                                                            if (textContent.indexOf("balabala1") != "-1" || textContent.indexOf("1") != "-1") {
-//                                                                var re = "<a href=\"#devis\">Rua~</a>";
-//                                                                reply(re);
-//                                                            } else if (textContent.indexOf("balabala2") != "-1" || textContent.indexOf("2") != "-1") {
-//                                                                var re = "RuaRua~";
-//                                                                reply(re);
-//                                                            } else if (textContent.indexOf("balabala3") != "-1" || textContent.indexOf("3") != "-1") {
-//                                                                var re = "RuaRuaRua~";
-//                                                                reply(re);
-//                                                            } else if (textContent.indexOf("balabala4") != "-1" || textContent.indexOf("4") != "-1") {
-//                                                                var re = "RuaRuaRuaRua~";
-//                                                                reply(re);
-//                                                            } else {
-//                                                                var re = "Questions susceptibles de vous intéresser: <br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(1)\",600)>1.balabala1</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(2)\",600)>2.balabala2 </a><br><a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(3)\",600)>3.balabala3</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(4)\",600)>4.balabala4</a>";
-//                                                                reply(re);
-//                                                            }
-
-                                                        }
-                                                    }
-                                                });
-
-                                                //点发送按钮发送消息
-                                                $("#chat-fasong").click(function () {
-                                                    var textContent = $("#message").val();
-                                                    send();
-                                                    if (textContent != "") {
-                                                        //聊天框默认最底部
-                                                        $(document).ready(function () {
-                                                            $("#chatBox-content-demo").scrollTop($("#chatBox-content-demo")[0].scrollHeight);
-                                                        });
-                                                        document.getElementById('timenow').innerHTML = timenow();
-                                                        if (textContent.indexOf("balabala1") != "-1" || textContent.indexOf("1") != "-1") {
-                                                            var re = "<a href=\"#devis\">Rua~</a>";
-                                                            reply(re);
-                                                        } else if (textContent.indexOf("balabala2") != "-1" || textContent.indexOf("2") != "-1") {
-                                                            var re = "RuaRua~";
-                                                            reply(re);
-                                                        } else if (textContent.indexOf("balabala3") != "-1" || textContent.indexOf("3") != "-1") {
-                                                            var re = "RuaRuaRua~";
-                                                            reply(re);
-                                                        } else if (textContent.indexOf("balabala4") != "-1" || textContent.indexOf("4") != "-1") {
-                                                            var re = "RuaRuaRuaRua~";
-                                                            reply(re);
-                                                        } else {
-                                                            var re = "Questions susceptibles de vous intéresser: <br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(1)\",600)>1.balabala1</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(2)\",600)>2.balabala2 </a><br><a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(3)\",600)>3.balabala3</a><br> <a href=\"javascript:void(0);\" onclick=setTimeout(\"replyNum(4)\",600)>4.balabala4</a>";
-                                                            reply(re);
-                                                        }
-
-                                                    }
-                                                });
-                                            } else {
-                                                alert('该浏览器不支持web socket');
-                                            }
-                                        });
+                            }
+                        }
+                    });
+                } else {
+                    alert('该浏览器不支持web socket');
+                }
+            });
         </script>   
         <!--客服人工回复部分结束-->
 
@@ -1093,12 +1108,8 @@
                     });
                     document.getElementById('timenow').innerHTML = timenow();
                 };
-
                 reader.readAsDataURL(pic.files[0]);
-
             }
-
-
         </script>
         <!--客服自动回复对话框JS部分结束-->
 
