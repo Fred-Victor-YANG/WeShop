@@ -1,6 +1,8 @@
 <!-- **************************************** -->
 <!-- Traitement du formulaire                 -->  
 <?php
+session_start();
+$_SESSION["connection"] = "offline";
 // la variable $affichage contiendra le contenu saisi dans le formulaire
 $affichage = "";
 
@@ -15,7 +17,7 @@ $pswd = '';
 $connection = @mysqli_connect("localhost", "root", "", "chat");
 
 if ($connection) {
-    // Changement du jeu de caractères pour utf-8                    
+    // Changement du jeu de caractères pour utf-8    
     mysqli_set_charset($connection, "utf8");
 } else {
     $errormsg .= "Erreur de connection<br>";
@@ -66,7 +68,8 @@ if (isset($_POST['connection'])) {
         // 
         // Vérification que le pseudo n'existe pas dans la table
 
-        $requete = "SELECT * FROM admin WHERE Name = '" . $name . "';";
+
+        $requete = "SELECT * FROM admin WHERE Name = '$name' and Password = '$pswd' ";
         $resultat = mysqli_query($connection, $requete);
         if (!$resultat) {
             $errormsg .= "Erreur de la requête $requete<br>";
@@ -74,39 +77,24 @@ if (isset($_POST['connection'])) {
         } else {
             // Nombre de lignes du résultat de la requête
             $nbligne = mysqli_num_rows($resultat);
-            if ($nbligne != 0) {
-                // Le pseudo existe déjà
-                $errormsg .= "Le pseudo $pseudo existe déjà<br>";
+
+            // Si aucun message d'erreur
+            if (empty($errormsg) & $nbligne != 0) {
+                $_SESSION["connection"] = "online";
+                echo '<script>console.log("session setted")</script>';
+                //header("refresh:0;url=welcome.html"); //???????welcome.html??
             }
-        }
-        // Vérification que le mail n'existe pas dans la table
-        $requete = "SELECT * FROM utilisateur WHERE Mail = '" . $mail . "';";
-        $resultat = mysqli_query($connection, $requete);
-        if (!$resultat) {
-            $errormsg .= "Erreur de la requête $requete<br>";
-            $errormsg .= "  Erreur n° " . mysqli_errno($connection) . " : " . mysqli_error($connection) . "<br>";
-        } else {
-            // Nombre de lignes du résultat de la requête
-            $nbligne = mysqli_num_rows($resultat);
-            if ($nbligne != 0) {
-                // Le mail existe déjà
-                $errormsg .= "Le mail $mail existe déjà<br>";
-            }
-        }
-        // Si aucun message d'erreur
-        if (empty($errormsg)) {
-            $conseilleur = 1;
+            
         }
     }
 
     // Si aucun message d'erreur
     if (empty($errormsg)) {
         // Affiche un message de confirmation ainsi que les valeurs saisies
-        $affichage .= "    <p>Nous avons pris en compte votre inscription.</p>\n";
+        $affichage .= "    <p>Nous avons pris en compte votre connexion.</p>\n";
         $affichage .= "    Voici les données saisies :\n    <ul>\n";
         $affichage .= "      <li>Nom : " . $name . "</li>\n";
         $affichage .= "      <li>Mot de passe : " . $pswd . "</li>\n";
-        $affichage .= "      <li>Inscription à la newsletter : ";
         if ($abo_newsletter == 1) {
             $affichage .= "Oui</li>\n";
         } else {
@@ -126,7 +114,7 @@ if (isset($_POST['connection'])) {
 if ($connection) {
     $deconnection_reussie = mysqli_close($connection);
     if (!$deconnection_reussie) {
-        $errormsg .= "Erreur de déconnection<br>";
+        $errormsg .= "Erreur de deconnection<br>";
     } else {
         $affichage .= "Déconnection réussie";
     }
@@ -151,8 +139,6 @@ if ($connection) {
     <body>
         <div class="ui inverted fixed menu">
             <div class="ui item">&nbsp;</div>  
-
-
             <div class="item right">&nbsp;</div>
         </div>
         <div class="ui main text container">
@@ -174,7 +160,8 @@ if ($connection) {
                         }
                         ?>
                     </div>                
-                </div>          
+                </div>
+                <script></script>
                 <?php
             }
             ?>   
@@ -184,10 +171,11 @@ if ($connection) {
 // S'il y a eu des erreurs ou si aucun appui sur le bouton "S'incrire"
             if (!empty($errormsg) || !(isset($_POST['connection']))) {
                 ?> 
-                
+
             </div>
             <?php
         }
+        echo "this value : ". $_SESSION["connection"] ." is the session now ";
         ?> 
     </body>
 </html>
