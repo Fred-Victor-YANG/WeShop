@@ -801,10 +801,20 @@
         <!-- 客服自动回复聊天框部分结束 -->
 
         <!-- 检测人工是否上线，判断是否需要机器回复 -->
-        <script>
-            var conseilleur = 1;
+        <?php
+        session_start ();
+        if (isset($_SESSION['connection'])) {
+        echo "<script>
+        var conseilleur = 1;
+        </script>";
+        }
+        else {
+        echo "<script>
+        var conseilleur = 0;
+        </script>";
+        }
+        ?>
 
-        </script>
         <!-- 检测人工是否上线部分结束 -->
 
         <!--客服人工回复-->
@@ -812,8 +822,8 @@
         <!--读取客户IP-->
         <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
         <script type="text/javascript">
-            console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"]);
-            var ip_client = returnCitySN["cip"];
+                                        console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"]);
+                                        var ip_client = returnCitySN["cip"];
         </script>
         <script>
             $(function () {
@@ -838,7 +848,7 @@
                         var uname = msg.name; //发送人
                         i++;
                         if (type == 'usermsg') {
-                            if (uname == 'conseilleur') {
+                            if (uname == 'weshop') {
                                 $('.chatBox-content-demo').append(reply(umsg));
                             }
                         }
