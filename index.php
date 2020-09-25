@@ -669,10 +669,18 @@
                                     console.log(returnCitySN["cip"] + ',' + returnCitySN["cname"]);
                                     var ip_client = returnCitySN["cip"];
     </script>
+    <!--另一种通过php检测ip的方法-->
+    <?php
+    $ip_local = gethostbyname($_ENV['COMPUTERNAME']); //获取本机的局域网IP
+    $externalContent = file_get_contents('http://checkip.dyndns.com/');
+    preg_match('/Current IP Address: \[?([:.0-9a-fA-F]+)\]?/', $externalContent, $m);
+    $ip_extern = $m[1]
+    ?>
     <!--检测人工客服是否上线-->
     <?php
     require 'conn.php';
     $cstm_online = 1;
+    $ip_local = gethostbyname($_ENV['COMPUTERNAME']);
     ?>
     <!--客服人工回复-->
 <!-- <script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script> -->
@@ -693,16 +701,9 @@
                 ws.onmessage = function (event) {
                     var msg = JSON.parse(event.data); //解析收到的json消息数据
                     console.log(msg);
-                    var type = msg.type; // 消息类型
-                    var umsg = msg.message; //消息文本
-                    var uname = msg.name; //发送人
+                    var re = msg.message; //消息文本
                     i++;
-                    if (type == '82.127.79.18') {
-                        $('.chatBox-content-demo').append(reply(umsg));
-                    }
-                    if (type == 'system') {
-                        console.log(umsg);
-                    }
+                    $('.chatBox-content-demo').append(reply(re));
                     $('#message').val('');
                     window.location.hash = '#' + i;
                 }
@@ -711,6 +712,7 @@
                 ws.onerror = function (event) {
                     i++;
                     console.log("Connected to WebSocket server error");
+                    $('.chatBox-content-demo').append(reply('Il y a une error sur Internet'));
                     window.location.hash = '#' + i;
                 }
 
@@ -718,7 +720,7 @@
                 ws.onclose = function (event) {
                     i++;
                     console.log('websocket Connection Closed. ');
-                    $('.chatBox-content-demo').append(reply('Il y a une error sur Internet'));
+                    $('.chatBox-content-demo').append(reply('Il n`y a personne sur ligne'));
                     window.location.hash = '#' + i;
                 }
 
@@ -728,9 +730,9 @@
                         return false;
                     }
                     var msg = {
-                        type: 'usermsg',
-                        name: ip_client,
-                        message: message,
+                        type: 'clientmsg',
+                        name: "<?php echo $ip_local;?>",
+                        message: message
                     };
                     try {
                         ws.send(JSON.stringify(msg));
@@ -772,9 +774,8 @@
                                     reply(re);
                                 }
                             }
-                        }
-                        else {
-                            reply ('il y a une error sur Internet');
+                        } else {
+                            reply('il y a une error sur Internet');
                             console.log(客服部分运行错误);
                         }
                     }

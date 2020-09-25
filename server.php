@@ -18,6 +18,7 @@ $clients = array($socket);
 //设置一个死循环,用来监听连接 ,状态
 while (true) {
 
+    $weshop;
     $changed = $clients;
     socket_select($changed, $null, $null, 0, 10);
 
@@ -33,8 +34,13 @@ while (true) {
 
         //获取client ip 编码json数据,并发送通知
         socket_getpeername($socket_new, $ip);
-        $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected')));
-        send_message($response);
+        send_message('system', $ip, 'connected');
+        if ($ip == '82.127.79.18') {
+            global $weshop;
+            $weshop = $socket_new;
+        }
+//        $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected')));
+//        send_message($response);
         $found_socket = array_search($socket, $changed);
         unset($changed[$found_socket]);
     }
@@ -47,12 +53,19 @@ while (true) {
             //解码发送过来的数据
             $received_text = unmask($buf);
             $tst_msg = json_decode($received_text);
+            $msg_type = $tst_msg->type;
             $user_name = $tst_msg->name;
             $user_message = $tst_msg->message;
 
-            //把消息发送回所有连接的 client 上去
-            $response_text = mask(json_encode(array('type' => 'usermsg', 'name' => $user_name, 'message' => $user_message)));
-            send_message($response_text);
+            //发送消息
+//            $response_text = mask(json_encode(array('type' => 'system', 'name' => $user_name, 'message' => $user_message)));
+            if (msg_type == 'clientmsg') {
+                $to_name = '82.127.79.18';
+                send_message($msg_type, $to_name, $user_message);
+            } else if (msg_type == 'weshop') {
+                send_message($msg_type, $user_name, $user_message);
+            }
+
             break 2;
         }
 
@@ -62,8 +75,8 @@ while (true) {
             $found_socket = array_search($changed_socket, $clients);
             socket_getpeername($changed_socket, $ip);
             unset($clients[$found_socket]);
-            $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' disconnected')));
-            send_message($response);
+//            $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' disconnected')));
+            send_message('system', $ip, 'disconnected');
         }
     }
 }
@@ -71,10 +84,22 @@ while (true) {
 socket_close($sock);
 
 //发送消息的方法
-function send_message($msg) {
-    global $clients;
-    foreach ($clients as $changed_socket) {
-        @socket_write($changed_socket, $msg, strlen($msg));
+function send_message($type, $name, $msg) {
+    if ($type == 'clientmsg') {
+        $msg_to_weshop = json_encode(array('type' => 'clientmsg', 'name' => $name, 'message' => $msg));
+        mask($msg_to_weshop);
+        global $weshop;
+        @socket_write($weshop, $msg_to_weshop);
+    } else if ($type == 'weshop') {
+        $msg_to_client = json_encode(array('type' => 'weshop', 'name' => '82.127.79.18', 'message' => $msg));
+        mask($msg_to_client);
+        foreach ($clients as $changed_socket) {
+            $ip_now = socket_getpeername($changed_socket, $ip);
+            if ($ip_now == $name){
+                $to_client = $changed_socket;
+            }
+        }
+        @socket_write($to_client, $msg_to_client);
     }
     return true;
 }
