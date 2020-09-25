@@ -1,4 +1,5 @@
 <?php
+
 $host = '192.168.1.100';
 $port = '8090';
 $null = NULL;
@@ -8,13 +9,13 @@ $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
 socket_bind($socket, 0, $port);
 
-//监�?�端�?�
+//监听端口
 socket_listen($socket);
 
-//连接的client socket 列表
+//连接的client socket列表
 $clients = array($socket);
 
-//设置一个死循环,用�?�监�?�连接 ,状�?
+//设置一个死循环,用来监听连接 ,状态
 while (true) {
 
     $changed = $clients;
@@ -22,15 +23,15 @@ while (true) {
 
     //如果有新的连接
     if (in_array($socket, $changed)) {
-        //接�?�并加入新的socket连接
+        //接受并加入新的socket连接
         $socket_new = socket_accept($socket);
         $clients[] = $socket_new;
 
-        //通过socket获�?�数�?�执行handshake
+        //通过socket获取数据执行handshake
         $header = socket_read($socket_new, 1024);
         perform_handshaking($header, $socket_new, $host, $port);
 
-        //获�?�client ip 编�?json数�?�,并�?��?通知
+        //获取client ip 编码json数据,并发送通知
         socket_getpeername($socket_new, $ip);
         $response = mask(json_encode(array('type' => 'system', 'message' => $ip . ' connected')));
         send_message($response);
@@ -38,18 +39,18 @@ while (true) {
         unset($changed[$found_socket]);
     }
 
-    //轮询 �?个client socket 连接
+    //轮询 每个client socket 连接
     foreach ($changed as $changed_socket) {
 
-        //如果有client数�?��?��?过�?�
+        //如果有client数据发送过来
         while (socket_recv($changed_socket, $buf, 1024, 0) >= 1) {
-            //解�?�?��?过�?�的数�?�
+            //解码发送过来的数据
             $received_text = unmask($buf);
             $tst_msg = json_decode($received_text);
             $user_name = $tst_msg->name;
             $user_message = $tst_msg->message;
 
-            //把消�?��?��?回所有连接的 client 上去
+            //把消息发送回所有连接的 client 上去
             $response_text = mask(json_encode(array('type' => 'usermsg', 'name' => $user_name, 'message' => $user_message)));
             send_message($response_text);
             break 2;
@@ -66,10 +67,10 @@ while (true) {
         }
     }
 }
-// 关闭监�?�的socket
+// 关闭监听的socket
 socket_close($sock);
 
-//�?��?消�?�的方法
+//发送消息的方法
 function send_message($msg) {
     global $clients;
     foreach ($clients as $changed_socket) {
@@ -78,7 +79,7 @@ function send_message($msg) {
     return true;
 }
 
-//解�?数�?�
+//解码数据
 function unmask($text) {
     $length = ord($text[1]) & 127;
     if ($length == 126) {
@@ -98,7 +99,7 @@ function unmask($text) {
     return $text;
 }
 
-//编�?数�?�
+//编码数据
 function mask($text) {
     $b1 = 0x80 | (0x1 & 0x0f);
     $length = strlen($text);
@@ -112,7 +113,7 @@ function mask($text) {
     return $header . $text;
 }
 
-//�?�手的逻辑
+//握手的逻辑
 function perform_handshaking($receved_header, $client_conn, $host, $port) {
     $headers = array();
     $lines = preg_split("/\r\n/", $receved_header);

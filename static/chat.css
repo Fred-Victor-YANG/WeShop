@@ -316,7 +316,7 @@
     position: relative;
 }
 
-
+    
 .clearfloat .left .chat-message{
     background: #D9D9D9;
     min-height: 36px;
@@ -369,7 +369,7 @@
 .clearfloat .right .chat-avatars{
     margin-left: 10px;
 }
-
+/* 底部输入栏 */
 .chatBox-send{
     width: 100%;
     padding: 10px 5px;
@@ -380,8 +380,7 @@
     left: 0;
 }
 .div-textarea{
-    border: 0px;
-    width: 245px !important;
+    width: 245px ;
     min-height: 20px;
     max-height: 100px;
     _height: 120px;
@@ -422,6 +421,7 @@
     display: none;
 }
 .biaoqing-photo{
+    background: #000000;
     width: 200px;
     height: 160px;
     background: #ffffff;
@@ -467,7 +467,7 @@
     display: inline-block;
     width: 30px;
     height: 30px;
-    background: url(static/bqxtb01.png) no-repeat;
+    background-image: url("bqxtb01.png");
     background-size: 200px auto;
     cursor: pointer;
 }

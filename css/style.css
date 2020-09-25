@@ -38,7 +38,8 @@
 *::before,
 *::after {
     -webkit-box-sizing: border-box;
-    box-sizing: border-box; }
+    box-sizing: border-box; 
+}
 
 html {
     font-family: sans-serif;
@@ -347,6 +348,10 @@ h6, .h6 {
 
 /*自定义部分结束，以下是来自模板的类*/
 
+.img_product{
+    width: 100%;
+}
+
 .lead {
     font-size: 1.25rem;
     font-weight: 300; }
@@ -525,7 +530,6 @@ pre code {
 .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl,
 .col-xl-auto {
     position: relative;
-    width: 100%;
     min-height: 1px;
     padding-right: 15px;
     padding-left: 15px; }
@@ -4506,7 +4510,7 @@ button.close {
     .modal-sm {
         max-width: 300px; } }
 
-@media (min-width: 992px) {
+@media (min-width: 800px) {
     .modal-lg {
         max-width: 1200px; } }
 
