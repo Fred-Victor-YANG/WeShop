@@ -20,12 +20,14 @@ if ($action == 'login') {
         $password = htmlentities($_POST['password']);
         $data = ['userid' => 1, 'username' => $username];
         //从数据库验证登录信息
-        $sql = "SELECT * FROM adminlist WHERE account = '$account' and password = '$password'";
+        $sql = "SELECT * FROM adminlist WHERE account = '$account' and password = '$password' and status = 1";
         $result = $conn->query($sql);
 
 
         //用户名和密码正确，则签发token
         if ($result->num_rows > 0) { 
+			$sql = "UPDATE adminlist set isonline = 1 WHERE account= '$account'";
+			$result = $conn->query($sql);
             $nowtime = time();
             $token   = [
                 'iss'  => 'http://www.weshop.fr ', //签发者
@@ -44,25 +46,23 @@ if ($action == 'login') {
     die(json_encode($res));
 } else {
     // 不是登录状态，想直接访问，如果没有本地保存token，则无法访问
-    $jwt = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : '';
-    //查看接受到的jwt
-    // $res = array('code' => 200, 'msg' => $jwt);
-    // die(json_encode($res));
+	$data = $_POST;
+    $jwt = $data['jwt'];
 
 
     //没有token
-    if ($jwt=="null"||empty($jwt)) {
-        $res = array('code' => 301, 'msg' => 'You do not have permission to access.');
+    if ($jwt == "null"|| empty($jwt)) {
+        $res = array('code' => 301, 'msg' => 'You do not have permission to access...');
         die(json_encode($res));
     }
-
     //以下是有token的情况
     try {
         JWT::$leeway = 60;//当前时间减去60，把时间留点余地
         //HS256方式，Jwt包自带的方法，这里要和签发的时候对应
         $token = JWT::decode($jwt, KEY, ['HS256']);
-    } catch (Exception $exception) {
-        $res = array('code' => 302, 'msg' => $exception->getMessage());
+    } 
+	catch (Exception $exception) {
+        $res = array('code' => 302, 'msg' => $_SERVER['HTTP_AUTHORIZATION']);
         die(json_encode($res));
     }
 

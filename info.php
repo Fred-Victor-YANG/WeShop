@@ -30,7 +30,7 @@
                         <a href="#" style="color: aliceblue;" class="dropdown-toggle" data-toggle="dropdown">admin <span style="color: aliceblue;"class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="#info.php">个人资料</a></li>
-                            <li><a href="login.html">退出</a></li>
+                            <li><a href="javascript:void(0);" onclick="logout()">退出</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -94,7 +94,7 @@
         var name;
         var id;
         $(function(){ 
-            $.ajax({url: 'changeData.php', type: 'post', data: {table: 'getAdmin', sql: 'SELECT * FROM adminList WHERE account=\''+account+'\';'}}).done(function (msg) {
+            $.ajax({url: 'changeData.php', type: 'post', data: {table: 'getAdmin', sql: 'SELECT * FROM adminlist WHERE account=\''+account+'\';'}}).done(function (msg) {
                 //php中json转js数组
                 var data_obj = eval(msg);
                 $("#account").text(data_obj[0].account);
@@ -103,6 +103,20 @@
                 id = data_obj[0].id;
             })
         });
+		
+		function logout() {
+		    // alert(123);
+		    var accountAdmin = localStorage.getItem("account");
+		    $.ajax({
+		        url: 'logout.php',
+		        type: 'post',
+		        data: {
+		            account: accountAdmin
+		        }
+		    }).done(function(msg) {
+		        window.location = "login.html";
+		    })
+		}
 
         function modify(){
             var password = $("#pwd").val();

@@ -1,11 +1,12 @@
 function checkToken(){
+	var jwt = localStorage.getItem("jwt");
     $.ajax({
         type: 'post',
         url: 'login.php',
         headers: {
             'Authorization': localStorage.getItem("jwt")
         },
-        data: {},
+        data: {jwt: jwt},
         async: true,
         dataType: 'json',
         success: function (data, status, xhr) {
@@ -18,6 +19,7 @@ function checkToken(){
             }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
+			alert("error");
             window.location.href="login.html";
         }
     });

@@ -12,7 +12,7 @@
 
     require 'uploadPhoto.php';
 
-    $sql = "INSERT INTO clientList (societe,societeCn, status, description,descriptionCn, address,imageUrl) 
+    $sql = "INSERT INTO clientlist (societe,societeCn, status, description,descriptionCn, address,imageUrl) 
     VALUES ('$societe', '$societeCn',$status, '$description','$descriptionCn', '$address','$imageUrl');";
     
     if ($conn->query($sql) === TRUE) {

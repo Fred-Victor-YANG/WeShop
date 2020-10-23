@@ -1,5 +1,5 @@
 <?php
-    require_once 'config.php';
+    require 'config.php';
     $conn=mysqli_connect($servername, $username, $password, $dbname);
     if (mysqli_connect_errno())
     {

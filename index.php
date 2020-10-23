@@ -30,7 +30,7 @@
                         <a href="#" style="color: aliceblue;" class="dropdown-toggle" data-toggle="dropdown">admin <span style="color: aliceblue;"class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="info.php">个人资料</a></li>
-                            <li><a href="login.html">退出</a></li>
+                            <li><a href="javascript:void(0);" onclick="logout()">退出</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -150,4 +150,17 @@
 </body>
 <script>
     checkToken();
+	
+	function logout() {
+	    var accountAdmin = localStorage.getItem("account");
+	    $.ajax({
+	        url: 'logout.php',
+	        type: 'post',
+	        data: {
+	            account: accountAdmin
+	        }
+	    }).done(function(msg) {
+	        window.location = "login.html";
+	    })
+	}
 </script>

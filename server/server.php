@@ -1,8 +1,10 @@
 #!/usr/bin/env php
 <?php
+require "../config.php";
 include "lib/phpsockets.io.php";
-require_once "../conn.php";
-require_once "../config.php";
+
+//require "../conn.php";
+
 
 $socket = new PHPWebSockets($server_ip, $server_port);
 
@@ -91,9 +93,9 @@ $socket->on('client msg', function ($socket, $data) {
         'client' => $client,
         'msg' => $msg,
     ));
-    global $conn;
-    $do = "INSERT INTO msg (socketID, ip, msg, others) VALUES ('$socketID','$client','$msg','msg online')";
-    $res = mysqli_query($conn, $do);
+    //global $conn;
+    // $do = "INSERT INTO msg (socketID, ip, msg, others) VALUES ('$socketID','$client','$msg','msg online')";
+    // $res = mysqli_query($conn, $do);
 });
 
 $socket->on('weshop reconnected', function ($socket, $status) {
@@ -135,9 +137,9 @@ $socket->on('reply', function ($socket, $data) {
         ));
     }
     $socketID = $socket->user->id;
-    global $conn;
-    $do = "INSERT INTO msg (socketID, ip, msg, others) VALUES ('$toClientID','$toClientIP','$data','reply')";
-    $res = mysqli_query($conn, $do);
+    // global $conn;
+    // $do = "INSERT INTO msg (socketID, ip, msg, others) VALUES ('$toClientID','$toClientIP','$data','reply')";
+    // $res = mysqli_query($conn, $do);
 });
 
 /* * *

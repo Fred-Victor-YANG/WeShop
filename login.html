@@ -57,6 +57,7 @@
                     //将jwt存储到本地,在storage localStorage
                     var jwt = xhr.getResponseHeader('Authorization');
                     localStorage.setItem("jwt", jwt);
+					localStorage.setItem("account",$('#account').val())
                     //跳转登录成功的页面
                     window.location.href="index.php";
                 }else{

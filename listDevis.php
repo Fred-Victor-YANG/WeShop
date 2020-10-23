@@ -30,7 +30,7 @@
                         <a href="#" style="color: aliceblue;" class="dropdown-toggle" data-toggle="dropdown">admin <span style="color: aliceblue;"class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="info.php">个人资料</a></li>
-                            <li><a href="login.html">退出</a></li>
+                            <li><a href="javascript:void(0);" onclick="logout()">退出</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -104,12 +104,12 @@
                     <tbody>
                         <?php
                             require 'conn.php';
-                            $fh = mysqli_query($conn,"select MAX(id) from Devis");
+                            $fh = mysqli_query($conn,"select MAX(id) from devis");
                             $c_echo = mysqli_fetch_array($fh);
                             $maxid = number_format($c_echo['MAX(id)'],0);
                             $id = $maxid;
                             while ($id >0) {
-                                $sql = "SELECT * FROM Devis WHERE ID = '".$id."'";
+                                $sql = "SELECT * FROM devis WHERE ID = '".$id."'";
                                 $result = mysqli_query($conn,$sql);
                                 while ($row = mysqli_fetch_array($result)) {
                                     echo "<tr style=\"height:105px\">";
@@ -180,7 +180,7 @@
     <script type="text/javascript">
         var currentPage = 1;
         var totalPage = 100;
-        checkToken();
+        //checkToken();
         $(function(){ 
             readCurrentPage();
             for(var i=0;i<tableDevis.rows.length;i++){
@@ -207,6 +207,20 @@
             $("#totalPage").html(totalPage);
             showRow(currentPage);
         });
+		
+		function logout() {
+		    // alert(123);
+		    var accountAdmin = localStorage.getItem("account");
+		    $.ajax({
+		        url: 'logout.php',
+		        type: 'post',
+		        data: {
+		            account: accountAdmin
+		        }
+		    }).done(function(msg) {
+		        window.location = "login.html";
+		    })
+		}
 
         //保存浏览记录-->浏览页码
         function storeCurrentPage(pageNum){
@@ -296,7 +310,7 @@
         function addRemark(){
             var id = $("#newId").val();
             var remark = $("#message").val();
-            $.ajax({ url: 'changeData.php',type: 'post',data:{table:'Devis',sql: 'UPDATE Devis SET remarkInfo =\''+remark+'\' WHERE id='+id+';'}}).done(function(msg){
+            $.ajax({ url: 'changeData.php',type: 'post',data:{table:'Devis',sql: 'UPDATE devis SET remarkInfo =\''+remark+'\' WHERE id='+id+';'}}).done(function(msg){
                 location.replace(window.location.href);
             })
         }
@@ -315,7 +329,7 @@
                 document.getElementById("btn-deal"+id).setAttribute("class","btn-xs btn-success");
                 document.getElementById("btn-deal"+id).innerHTML = "已处理";
                 //ajax跨域调用php
-                $.ajax({ url: 'changeData.php',type: 'post',data:{table:'Devis',sql: 'UPDATE Devis SET statut=1 WHERE id='+id+';'}}).done(function(msg){
+                $.ajax({ url: 'changeData.php',type: 'post',data:{table:'Devis',sql: 'UPDATE devis SET statut=1 WHERE id='+id+';'}}).done(function(msg){
                     location.replace(window.location.href);
                     shwoRow(currentPage);
                 })
@@ -325,7 +339,7 @@
                 document.getElementById("btn-deal"+id).setAttribute("class","btn-xs btn-waring");
                 document.getElementById("btn-deal"+id).innerHTML = "未处理";
                 //ajax跨域调用php
-                $.ajax({ url: 'changeData.php',type: 'post',data:{table:'Devis',sql: 'UPDATE Devis SET statut=0 WHERE id='+id+';'}}).done(function(msg){
+                $.ajax({ url: 'changeData.php',type: 'post',data:{table:'Devis',sql: 'UPDATE devis SET statut=0 WHERE id='+id+';'}}).done(function(msg){
                     location.replace(window.location.href);
                     shwoRow(currentPage);
                 })
@@ -357,7 +371,7 @@
     <script>
         function del(){
             var id = $("#newId").val();
-            $.ajax({ url: 'changeData.php',type: 'post',data:{table:'Devis',sql: 'DELETE FROM Devis WHERE id='+id+';'}}).done(function(msg){
+            $.ajax({ url: 'changeData.php',type: 'post',data:{table:'devis',sql: 'DELETE FROM devis WHERE id='+id+';'}}).done(function(msg){
                 location.replace(window.location.href);
             })
         }

@@ -42,7 +42,7 @@ $host = '192.168.1.153';
                             <a href="#" style="color: aliceblue;" class="dropdown-toggle" data-toggle="dropdown">admin <span style="color: aliceblue;"class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="info.php">个人资料</a></li>
-                                <li><a href="login.html">退出</a></li>
+                                <li><a href="javascript:void(0);" onclick="logout()">退出</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -114,10 +114,10 @@ $host = '192.168.1.153';
         $res = mysqli_fetch_array($status);
         echo '<script>console.log("status of online in db : "' + $res[0] + ');</script>';
         if ($res[0] != 0) {
-            $_SESSION['online'] = 1;
+            $online = 1;
             echo '<script>console.log ("client is online");</script>';
         } else if ($res[0] == 0) {
-            $_SESSION['online'] = 0;
+            $online = 0;
             echo '<script>console.log ("client is offline");</script>';
         } else {
             echo '<script>console.log ("error");</script>';
@@ -134,10 +134,24 @@ $host = '192.168.1.153';
         ?>
         <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
         <script type="text/javascript">
-            //checkToken();     
+            checkToken(); 
+				
+			function logout() {
+			    // alert(123);
+			    var accountAdmin = localStorage.getItem("account");
+			    $.ajax({
+			        url: 'logout.php',
+			        type: 'post',
+			        data: {
+			            account: accountAdmin
+			        }
+			    }).done(function(msg) {
+			        window.location = "login.html";
+			    })
+			}
             var ip_extern = returnCitySN["cip"];
             var ip_intern = "<?php echo $ip_local; ?>";
-            var online = "<?php echo $_SESSION['online']; ?>";
+            var online = "<?php echo $online; ?>";
             if (online == '1') {
                 document.getElementById('chat_status').innerHTML = 'Connected';
             } else if (online == '0') {

@@ -7,7 +7,7 @@
     $name = $data['name'];
     $status = $data['status'];
 
-    $sql = "INSERT INTO adminList (account, password, name, status) 
+    $sql = "INSERT INTO adminlist (account, password, name, status) 
     VALUES ('$account', '$psd', '$name', '$status');";
     
     if ($conn->query($sql) === TRUE) {

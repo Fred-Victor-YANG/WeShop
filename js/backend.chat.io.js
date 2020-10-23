@@ -96,7 +96,7 @@ backend.on('client msg', function (data) {
     socketID = data.socketID;
     client = data.client;
     msg = data.msg;
-    //$.get("./chat_data.php?act=msg", {socketID: socketID, ip: client, msg: msg, others: "msg online"});
+    $.get("./chat_data.php?act=msg", {socketID: socketID, ip: client, msg: msg, others: "msg online"});
     nameIsSet = $('#name').val();
 
     //add a client talking with automatically
@@ -140,7 +140,8 @@ $('#users').delegate('li', 'click', function () {
     $('#name').val(client_ip + '/' + client_id);
     //console.log('.message ' + client_id);
     //show the msgs with this proper client
-    $('.' + client_id).siblings().hide();
+    //$('.' + client_id).siblings().hide();
+	$('.show-area').children().hide();
     $('.' + client_id).each(function (i, ele) {
         $(this).fadeIn();
     });
@@ -173,6 +174,7 @@ function send() {
         //console.log('msg : ' + data.data + ' sent to : ' + data.to);
         ShowMyMsg(to_id, to_ip, msg);
         $('#message').val('');
+		$.get("./chat_data.php?act=msg", {socketID: to_id, ip: to_ip, msg: msg, others: "msg online"});
     } else if (to == '') {
 
     }

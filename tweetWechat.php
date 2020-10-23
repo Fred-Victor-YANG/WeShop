@@ -31,7 +31,7 @@
                             <a href="#" style="color: aliceblue;" class="dropdown-toggle" data-toggle="dropdown">admin <span style="color: aliceblue;"class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="info.php">个人资料</a></li>
-                                <li><a href="login.html">退出</a></li>
+                                <li><a href="javascript:void(0);" onclick="logout()">退出</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -96,11 +96,12 @@
                         <tbody>
                             <?php
                             require 'conn.php';
-                            $fh = mysqli_query($conn, "select MAX(id) from wechatList");
+                            $fh = mysqli_query($conn, "select MAX(id) from wechatlist");
                             $c_echo = mysqli_fetch_array($fh);
                             $maxid = number_format($c_echo['MAX(id)'], 0);
+							$id = 1;
                             while ($id <= $maxid) {
-                                $sql = "SELECT * FROM wechatList WHERE ID = '" . $id . "'";
+                                $sql = "SELECT * FROM wechatlist WHERE ID = '" . $id . "'";
                                 $result = mysqli_query($conn, $sql);
                                 while ($row = mysqli_fetch_array($result)) {
                                     echo "<tr>";
@@ -255,9 +256,23 @@
                     }
                 }
             });
+			
+			function logout() {
+			    // alert(123);
+			    var accountAdmin = localStorage.getItem("account");
+			    $.ajax({
+			        url: 'logout.php',
+			        type: 'post',
+			        data: {
+			            account: accountAdmin
+			        }
+			    }).done(function(msg) {
+			        window.location = "login.html";
+			    })
+			}
             function del() {
                 var id = $("#currentId").val();
-                $.ajax({url: 'changeData.php', type: 'post', data: {table: 'wechatList', sql: 'DELETE FROM wechatList WHERE id=' + id + ';'}}).done(function (msg) {
+                $.ajax({url: 'changeData.php', type: 'post', data: {table: 'wechatlist', sql: 'DELETE FROM wechatlist WHERE id=' + id + ';'}}).done(function (msg) {
                     location.replace(window.location.href);
                 })
             }
