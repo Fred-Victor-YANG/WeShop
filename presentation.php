@@ -352,7 +352,7 @@ include_once "changeLang.php";
                 type: 'post',
                 data: {
                     table: 'wechatlist',
-                    sql: 'SELECT * FROM wechatList;'
+                    sql: 'SELECT * FROM wechatlist;'
                 }
             }).done(function(msg) {
                 //php中json转js数组

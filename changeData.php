@@ -2,7 +2,6 @@
     require 'conn.php';
     $table=$_POST['table'];
     $sql = $_POST['sql'];
-
     class Product {
         public $title;
         public $titleCn;
@@ -26,14 +25,18 @@
         public $imageUrl;
     }
 
-	
-    $result = $conn->query($sql);
-    
+//echo " 2 ";
+    $result = mysqli_query($conn, $sql);
+//var_dump ($result);
+//echo "<br>";
+
     if($table == "productlist"){
         if($result) {
-            //echo "查询成功";
+            //echo "3";
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){
+//echo $row["title"]." ";
+//echo $row["titleCn"]." ";
                     $product = new Product();
                     $product->title = $row["title"];
                     $product->titleCn = $row["titleCn"];
@@ -43,15 +46,11 @@
                     $data[]=$product;
                 }
             }
-            //把数据转换为JSON数据.
             $json = json_encode($data);
             echo $json;
-        } else {
-            echo "查询失败";
-        }
+        } 
     }else if ($table == "wechatlist"){
         if($result) {
-            //echo "查询成功";
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){
                     $tweet = new Tweet();
@@ -63,15 +62,11 @@
                     $data[]=$tweet;
                 }
             }
-            //把数据转换为JSON数据.
             $json = json_encode($data);
             echo $json;
-        } else {
-            echo "查询失败";
         }
     }else if ($table == "clientlist"){
         if($result) {
-            //echo "查询成功";
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){
                     $client = new Client();
@@ -82,15 +77,11 @@
                     $data[]=$client;
                 }
             }
-            //把数据转换为JSON数据.
             $json = json_encode($data);
             echo $json;
-        } else {
-            echo "查询失败";
         }
     }else if ($table == "clientlistCn"){
         if($result) {
-            //echo "查询成功";
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){
                     $client = new Client();
@@ -101,15 +92,8 @@
                     $data[]=$client;
                 }
             }
-            //把数据转换为JSON数据.
             $json = json_encode($data);
             echo $json;
-        } else {
-            echo "查询失败";
         }
     }
-
-
-    
-
     $conn->close();

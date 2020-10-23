@@ -1,10 +1,10 @@
 <?php
-    $servername = "127.0.0.1:8080";
+//init for db
+    $servername = "localhost";
     $username = "root";
-    $password = "022611";
-    $dbname = "myDB";
-
-    $server_ip = "192.168.43.224";
+    $password = "";
+    $dbname = "mydb";
+//init for websocket
+    $server_ip = "192.168.1.153";
     $server_port = "2000";
-    
 ?>

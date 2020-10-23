@@ -215,7 +215,7 @@ include_once "changeLang.php";
     <script type="text/javascript">
         $(function() {
             if (localStorage.getItem("lang") == "zh") {
-                var lang = "zh-CN";
+                var lang = "zh";
             } else if (localStorage.getItem("lang") == "fr") {
                 var lang = "fr";
             } else {
@@ -226,7 +226,7 @@ include_once "changeLang.php";
                 type: 'post',
                 data: {
                     table: 'wechatlist',
-                    sql: 'SELECT * FROM wechatList;'
+                    sql: 'SELECT * FROM wechatlist;'
                 }
             }).done(function(msg) {
                 var data_obj = eval(msg);

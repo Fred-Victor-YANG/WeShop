@@ -22,7 +22,7 @@
     $messages = $data['message'];
     $date = date('Y-m-d');
 
-    $sql = "INSERT INTO Devis (prinProduits, autreProduits, societe, email, telephone, codePostale, addresse, messages, statut,reg_date) 
+    $sql = "INSERT INTO devis (prinProduits, autreProduits, societe, email, telephone, codePostale, addresse, messages, statut,reg_date) 
     VALUES ('$mainProduct', '$otherproduct', '$company', '$email','$telephone','$postcode','$address','$messages',0,'$date');";
     
     if ($conn->query($sql) === TRUE) {
