@@ -517,7 +517,6 @@ include_once "changeLang.php";
                     type: 'post',
                     data: {
                         table: 'productlist',
-                        sql: 'SELECT * FROM productlist;'
                     }
                 }).done(function(msg) {
                     //php中json转js数组
@@ -529,7 +528,7 @@ include_once "changeLang.php";
                             "url('" + data_obj[i].imageUrl + "')";
                         $("#product" + pruductNum + "Title").text(data_obj[i].titleCn);
                         //.text不能换行，不识别<br>,.html识别
-                $("#product" + pruductNum + "Description").html(data_obj[i].descriptionCn);
+                        $("#product" + pruductNum + "Description").html(data_obj[i].descriptionCn);
                         $("#product" + pruductNum + "Image").attr('src', data_obj[i].imageUrl);
                     }
                 });
@@ -540,7 +539,6 @@ include_once "changeLang.php";
                     type: 'post',
                     data: {
                         table: 'productlist',
-                        sql: 'SELECT * FROM productlist;'
                     }
                 }).done(function(msg) {
                     //php中json转js数组
@@ -563,7 +561,6 @@ include_once "changeLang.php";
                 type: 'post',
                 data: {
                     table: 'wechatlist',
-                    sql: 'SELECT * FROM wechatlist;'
                 }
             }).done(function(msg) {
                 //php中json转js数组

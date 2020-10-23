@@ -1,7 +1,6 @@
 <?php
     require 'conn.php';
     $table=$_POST['table'];
-    $sql = $_POST['sql'];
     class Product {
         public $title;
         public $titleCn;
@@ -25,18 +24,13 @@
         public $imageUrl;
     }
 
-//echo " 2 ";
-    $result = mysqli_query($conn, $sql);
-//var_dump ($result);
-//echo "<br>";
 
     if($table == "productlist"){
+        $sql= 'SELECT * FROM productlist;';
+        $result = mysqli_query($conn, $sql);
         if($result) {
-            //echo "3";
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){
-//echo $row["title"]." ";
-//echo $row["titleCn"]." ";
                     $product = new Product();
                     $product->title = $row["title"];
                     $product->titleCn = $row["titleCn"];
@@ -50,6 +44,8 @@
             echo $json;
         } 
     }else if ($table == "wechatlist"){
+        $sql= 'SELECT * FROM wechatlist;';
+        $result = mysqli_query($conn, $sql);
         if($result) {
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){
@@ -66,6 +62,8 @@
             echo $json;
         }
     }else if ($table == "clientlist"){
+        $sql= 'SELECT * FROM clientlist';
+        $result = mysqli_query($conn, $sql);
         if($result) {
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){
@@ -81,6 +79,8 @@
             echo $json;
         }
     }else if ($table == "clientlistCn"){
+        $sql= 'SELECT * FROM clientlist';
+        $result = mysqli_query($conn, $sql);
         if($result) {
             while ($row = mysqli_fetch_array($result)) {
                 if($row["status"]==1){

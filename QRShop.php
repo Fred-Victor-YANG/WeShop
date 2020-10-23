@@ -320,7 +320,6 @@ include_once "changeLang.php";
                 type: 'post',
                 data: {
                     table: 'wechatlist',
-                    sql: 'SELECT * FROM wechatlist;'
                 }
             }).done(function(msg) {
                 var data_obj = eval(msg);
